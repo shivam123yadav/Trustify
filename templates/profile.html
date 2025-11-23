@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar">
+      <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}" class="home-btn"><strong>Home</strong></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="profile-container">
+    <div class="user-info">
+      <div class="profile-photo">
+        <img id="userPhoto" src="{{ user.photo or '/static/profile_images/default-avatar.png' }}" alt="Profile Photo"
+          class="profile-img">
+
+      
+        <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
+          <input type="file" id="fileInput" name="profileImage" accept="image/*" style="display:none;">
+          <button id="confirmUploadBtn" type="submit" style="display:none;">Upload</button>
+          <button id="mainUploadBtn" type="button">Upload Image</button>
+
+        </form>
+      </div>
+
+      <div class="user-details">
+        <p><strong>Name:</strong> <span id="userName">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+      </div>
+
+    </div>
+
+    <div class="records">
+      <h3>Scan History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Input</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable">
+          <tr>
+            <td colspan="4" style="text-align:center;">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script src="{{ url_for('static', filename='profile.js') }}"></script>
+  <script src="{{ url_for('static', filename='auth.js') }}"></script>
+</body>
+
+</html>

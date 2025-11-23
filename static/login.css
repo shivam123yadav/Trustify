@@ -1,0 +1,259 @@
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at top left, #08121f, #0a0f1c, #1c1f2b);
+  color: #e6e6e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+
+body::before {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 255, 209, 0.25), transparent 70%);
+  top: -150px;
+  right: -150px;
+  filter: blur(150px);
+  animation: floatGlow 10s infinite alternate ease-in-out;
+}
+
+@keyframes floatGlow {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-40px, 40px);
+  }
+}
+
+
+.container {
+  position: relative;
+  width: 880px;
+  height: 560px;
+  background: rgba(22, 28, 40, 0.8);
+  border-radius: 30px;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(0, 255, 209, 0.15);
+  box-shadow: 0 0 50px rgba(0, 255, 200, 0.1);
+  display: flex;
+  overflow: hidden;
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.welcome-box {
+  width: 45%;
+  background: linear-gradient(135deg, #00bfa6, #008f7a);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  padding: 40px;
+}
+
+.welcome-box h1 {
+  font-size: 32px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  letter-spacing: 1px;
+}
+
+.welcome-box p {
+  font-size: 15px;
+  margin: 12px 0 25px;
+  opacity: 0.9;
+}
+
+.welcome-box button {
+  background: transparent;
+  border: 2px solid #00ffd1;
+  color: #00ffd1;
+  padding: 10px 30px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.4s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 209, 0.2);
+}
+
+.welcome-box button:hover {
+  background: #00ffd1;
+  color: #0a0f1c;
+  box-shadow: 0 0 25px #00ffd1;
+  transform: scale(1.05);
+}
+
+
+.form-box {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 60px;
+  text-align: center;
+}
+
+.form-box h2 {
+  color: #00ffd1;
+  font-size: 30px;
+  font-weight: 600;
+  text-shadow: 0 0 15px #00ffd1;
+  margin-bottom: 25px;
+}
+
+
+.input-box {
+  position: relative;
+  width: 100%;
+  margin: 18px 0;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(0, 255, 209, 0.3);
+  border-radius: 10px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.25);
+  color: #e6e6e6;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.input-box input:focus {
+  border-color: #00ffd1;
+  box-shadow: 0 0 15px #00ffd1;
+}
+
+.input-box label {
+  position: absolute;
+  left: 15px;
+  top: 14px;
+  color: #aaa;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
+  top: -10px;
+  left: 12px;
+  font-size: 12px;
+  color: #00ffd1;
+  background: #0a0f1c;
+  padding: 0 5px;
+  border-radius: 4px;
+}
+
+
+.login-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #00ffd1, #00bfa6);
+  color: #0a0f1c;
+  font-weight: 600;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 0 20px rgba(0, 255, 209, 0.3);
+  transition: 0.3s ease;
+}
+
+.login-btn:hover {
+  background: #00e6b8;
+  box-shadow: 0 0 25px #00ffd1;
+  transform: translateY(-2px);
+}
+
+
+.forgot {
+  display: block;
+  text-align: right;
+  font-size: 13px;
+  margin-top: -5px;
+  color: #00ffd1;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.forgot:hover {
+  text-shadow: 0 0 10px #00ffd1;
+}
+
+
+.or {
+  margin: 25px 0 15px;
+  font-size: 13px;
+  color: #999;
+}
+
+
+.social-icons a {
+  display: inline-block;
+  margin: 0 10px;
+  background: rgba(0, 255, 209, 0.08);
+  padding: 10px;
+  border-radius: 50%;
+  transition: 0.4s;
+  border: 1px solid rgba(0, 255, 209, 0.15);
+}
+
+.social-icons a:hover {
+  background: #00ffd1;
+  box-shadow: 0 0 20px #00ffd1;
+  transform: scale(1.1);
+}
+
+.social-icons img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(90%);
+}
+
+.social-icons a:hover img {
+  filter: brightness(0%);
+}
+
+
+.popup {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  background: #00ffd1;
+  color: #0a0f1c;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 0 15px #00ffd1;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.4s ease;
+  z-index: 1000;
+}
+
+.popup.show {
+  opacity: 1;
+  transform: translateY(0);
+}

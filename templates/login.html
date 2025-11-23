@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Trustify</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="welcome-box">
+      <h1 id="welcomeTitle">Hello, Welcome!</h1>
+      <p id="welcomeText">Don't have an account?</p>
+      <button id="toggleFormBtn" class="register-btn">Register</button>
+    </div>
+
+    <div class="form-box">
+      <h2 id="formTitle">Login</h2>
+
+      
+      <form id="loginForm">
+        <div class="input-box">
+          <input type="email" id="loginEmail" required />
+          <label>Email</label>
+        </div>
+
+        <div class="input-box">
+          <input type="password" id="loginPassword" required />
+          <label>Password</label>
+        </div>
+
+        <a href="#" class="forgot">Forgot Password?</a>
+        <button type="submit" class="login-btn">Login</button>
+
+        <p class="or">or login with social platforms</p>
+        <div class="social-icons">
+          <a href="#"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/google.svg" alt="Google"></a>
+          <a href="#"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/facebook.svg" alt="Facebook"></a>
+          <a href="#"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" alt="LinkedIn"></a>
+          <a href="#"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub"></a>
+        </div>
+      </form>
+
+      
+      <form id="registerForm" style="display:none;">
+        <div class="input-box">
+          <input type="text" id="regName" required />
+          <label>Full Name</label>
+        </div>
+
+        <div class="input-box">
+          <input type="email" id="regEmail" required />
+          <label>Email</label>
+        </div>
+
+        <div class="input-box">
+          <input type="password" id="regPassword" required />
+          <label>Password</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="regContact" />
+          <label>Contact (optional)</label>
+        </div>
+
+        <button type="submit" class="login-btn">Register</button>
+      </form>
+    </div>
+  </div>
+
+
+
+  <script src="{{ url_for('static', filename='login.js') }}"></script>
+  <script src="{{ url_for('static', filename='auth.js') }}"></script>
+
+</body>
+
+</html>

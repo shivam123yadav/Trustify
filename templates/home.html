@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trustify - AI Threat Detection</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <h1>Trustify</h1>
+      <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}" class="home-btn"><strong>Home</strong></a></li>
+        <li><a href="{{ url_for('about') }}" class="about-btn"><strong>About</strong></a></li>
+        <li><a href="{{ url_for('profile') }}" class="profile-btn"><strong>Profile</strong></a></li>
+        <li><a href="{{ url_for('dashboard') }}" class="dashboard-btn"><strong>Dashboard</strong></a></li>
+        <li><a href="{{ url_for('login') }}" class="login-btn"><strong>login</strong></a></li>
+
+      </ul>
+    </div>
+  </nav>
+
+
+  <section id="home" class="hero">
+    <div class="hero-content">
+      <h2>AI-Powered Phishing & Malware Detection</h2>
+      <p>Protect your system from online threats using advanced AI models. Detect suspicious URLs, emails, and files
+        instantly.</p>
+      <a href="{{ url_for('dashboard') }}" class="cta-btn">Go to Dashboard</a>
+    </div>
+  </section>
+
+
+  <section id="about" class="about">
+    <h2>About Trustify</h2>
+    <p>Trustify leverages the power of Gemini AI, a state-of-the-art generative intelligence model, to detect phishing
+      and malware threats in real time.
+      By analyzing patterns in URLs, emails, and files, it provides instant, reliable threat detection and insights.
+      Our mission is to make AI-driven cybersecurity accessible, intelligent, and trustworthy for everyone.</p>
+  </section>
+  
+
+  <footer class="footer">
+    <p>| © 2025 Trustify |</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="{{ url_for('static', filename='auth.js') }}"></script>
+
+
+
+</body>
+
+</html>

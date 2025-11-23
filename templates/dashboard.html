@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URl and malware Threat Detector</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}" class="home-btn"><strong>Home</strong></a></li>
+            </ul>
+            <h1 class="nav-center">Trustify</h1>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2><i class="fas fa-exclamation-triangle"></i> Malicious Files</h2>
+        <form action="/scam/" method="post" enctype="multipart/form-data"
+            onsubmit="showSpinner('fileForm', 'fileSpinner')">
+            <label for="file"><strong>Upload a file (PDF/TXT only):</strong></label><br>
+            <input type="file" name="file" required><br>
+            <button type="submit"><i class="fas fa-upload scan-icon"></i> Analyze</button>
+            <div id="fileSpinner" class="spinner"></div>
+        </form>
+
+        {% if message %}
+        <h3>Result:</h3>
+        <p><strong>{{ message }}</strong></p>
+        {% endif %}
+
+        <h2><i class="fas fa-link"></i> URL Threat Detection</h2>
+        <form method="post" action="/predict" onsubmit="showSpinner('urlForm', 'urlSpinner')">
+            <label for="url">Enter URL:</label>
+            <input type="text" name="url" required>
+            <button type="submit"><i class="fas fa-search"></i> Classify</button>
+            <div id="urlSpinner" class="spinner"></div>
+        </form>
+
+        {% if predicted_class %}
+        <div class="result-box {{ predicted_class.lower() }}">
+            <p><strong>URL:</strong> {{ input_url }}</p>
+            <p><strong>Predicted Class:</strong> {{ predicted_class }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="{{ url_for('static', filename='auth.js') }}"></script>
+
+</body>
+
+</html>

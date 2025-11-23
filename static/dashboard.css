@@ -1,0 +1,234 @@
+body {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0a0f1c, #1c1f2b);
+    color: #e6e6e6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.navbar {
+    width: 100%;
+    background: rgba(22, 27, 34, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.nav-center {
+    margin: 0;
+    font-size: 34px;
+    font-weight: 700;
+    color: #00b7ff;
+    text-shadow: 0 0 10px rgba(0, 183, 255, 0.7);
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    font-size: 18px;
+    font-weight: 600;
+    color: #e6e6e6;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #00b7ff;
+    text-shadow: 0 0 8px rgba(0, 230, 184, 0.6);
+}
+
+.nav-links a.home-btn {
+  position: relative;
+}
+
+.nav-links a.home-btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: #00b7ff;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.nav-links a.home-btn:hover::after{
+  width: 100%;
+}
+
+
+.tagline {
+    margin-top: 10px;
+    font-size: 20px;
+    color: #00e6b8;
+    text-shadow: 0 0 10px rgba(0, 230, 184, 0.5);
+    animation: glowPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+    from {
+        text-shadow: 0 0 8px rgba(0, 230, 184, 0.4);
+    }
+
+    to {
+        text-shadow: 0 0 16px rgba(0, 230, 184, 0.8);
+    }
+}
+
+
+.container {
+    margin-top: 130px;
+    background: rgba(28, 33, 48, 0.95);
+    padding: 45px;
+    border-radius: 16px;
+    width: 70%;
+    max-width: 850px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 183, 255, 0.15);
+    border: 1px solid rgba(0, 183, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 35px rgba(0, 183, 255, 0.25);
+}
+
+/* Headings */
+.container h2 {
+    color: #00e6b8;
+    font-size: 26px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 8px rgba(0, 230, 184, 0.6);
+}
+
+/* Input bar */
+input[type="file"],
+input[type="text"] {
+    width: 95%;
+    padding: 14px;
+    font-size: 17px;
+    border: 2px solid #00b7ff;
+    border-radius: 10px;
+    background-color: #141820;
+    color: #e6e6e6;
+    margin-bottom: 18px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+    border-color: #00e6b8;
+    box-shadow: 0 0 12px rgba(0, 230, 184, 0.5);
+}
+/* Buttons */
+button {
+    background: linear-gradient(90deg, #00b7ff, #00e6b8);
+    color: white;
+    padding: 14px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 10px rgba(0, 183, 255, 0.3);
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 18px rgba(0, 230, 184, 0.5);
+}
+/* Spinner */
+.spinner {
+    display: none;
+    margin: 15px auto;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-top: 5px solid #00b7ff;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+/* Result*/
+.result-box {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 12px rgba(0, 183, 255, 0.15);
+}
+/* Threat colour */
+.secure {
+    color: #00ffb3;
+    text-shadow: 0 0 8px rgba(0, 255, 179, 0.4);
+}
+
+.defacement {
+    color: #ffb100;
+    text-shadow: 0 0 8px rgba(255, 177, 0, 0.4);
+}
+
+.malware {
+    color: #ff4b4b;
+    text-shadow: 0 0 8px rgba(255, 75, 75, 0.5);
+}
+
+.phishing {
+    color: #f31206;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+}
+
+.unknown {
+    color: #cfcfcf;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+.container,
+.navbar,
+input,
+button {
+    transition: all 0.3s ease-in-out;
+}

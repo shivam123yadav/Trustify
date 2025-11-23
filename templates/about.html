@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='about.css') }}">
+</head>
+<body>
+  <header>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}" class="home-btn"><strong>Home</strong></a></li>
+            </ul>
+        </nav>
+    </header>
+    
+  <div class="container">
+    <h1 class="title">About This Project</h1>
+    <p class="description">
+      This project was developed to create a seamless and efficient system for managing Phishing and Malware Detection.
+    </p>
+
+    <div class="developers">
+  <div class="developer-card">
+    <img src="{{ url_for('static', filename='About_images/shivam_yadav.jpg') }}" alt="Developer " class="profile-img">
+    <h2>Developer: Shivam Yadav</h2>
+    <p><strong>Role:</strong> Full Stack Developer</p>
+    <p><strong>Skills:</strong> HTML, CSS, JavaScript, Python, Flask</p>
+    <p><strong>Contribution:</strong> Designed the user interface, implemented client-side functionality, developed server-side logic, and integrated backend functionalities.</p>
+  </div>
+</div>
+
+
+  <script src="{{ url_for('static', filename='auth.js') }}"></script>
+
+
+</body>
+</html>
