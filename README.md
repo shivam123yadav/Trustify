@@ -11,6 +11,7 @@
 in terminal 
 >>pip install virtualenv
 >>virtualenv env
+
 now automatically env folder will be created in your project folder
 
 ## Activate virtaul environment
