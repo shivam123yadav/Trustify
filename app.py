@@ -74,7 +74,7 @@ Return a clear classification message:
     except Exception as e:
         return f"Error during classification: {str(e)}"
 
-#Url detection prompt
+
 def url_detection(url):
     prompt = f"""
 You are an advanced AI model specializing in URL security classification. Classify the given URL as one of:
