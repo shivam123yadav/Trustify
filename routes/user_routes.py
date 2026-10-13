@@ -19,8 +19,8 @@ records_collection = db["records"]
 
 @user_bp.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
-    if not data:
+    data = request.get_json(silent=True)
+    if not data or not isinstance(data, dict):
         return jsonify({"error": "No data provided"}), 400
 
     name = data.get("name")
@@ -31,31 +31,44 @@ def register():
     if not all([name, email, password]):
         return jsonify({"error": "Missing required fields"}), 400
 
-    if users_collection.find_one({"email": email}):
-        return jsonify({"error": "Email already exists"}), 400
+    try:
+        if users_collection.find_one({"email": email}):
+            return jsonify({"error": "Email already exists"}), 400
 
-    hashed_password = generate_password_hash(password)
-    new_user = {"name": name, "email": email, "password": hashed_password, "contact": contact}
-    users_collection.insert_one(new_user)
+        hashed_password = generate_password_hash(password)
+        new_user = {"name": name, "email": email, "password": hashed_password, "contact": contact}
+        users_collection.insert_one(new_user)
+    except Exception as e:
+        current_app.logger.error(f"Database error during registration: {e}")
+        return jsonify({"error": "Database service unavailable. Please try again later."}), 503
 
     return jsonify({"message": "User registered successfully"}), 201
 
 
 @user_bp.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not data or not isinstance(data, dict):
+        return jsonify({"error": "No data provided"}), 400
+
     email = data.get("email")
     password = data.get("password")
 
-    user = users_collection.find_one({"email": email})
+    if not email or not password:
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    try:
+        user = users_collection.find_one({"email": email})
+    except Exception as e:
+        current_app.logger.error(f"Database error during login: {e}")
+        return jsonify({"error": "Database service unavailable. Please try again later."}), 503
+
     if not user:
         return jsonify({"error": "Invalid email or password"}), 401
 
-    
     if not check_password_hash(user["password"], password):
         return jsonify({"error": "Invalid email or password"}), 401
 
-    
     session.clear()
     session["user_id"] = str(user["_id"])
     session["user_email"] = user["email"]
@@ -70,23 +83,24 @@ def profile_data():
     if "user_id" not in session:
         return jsonify({"error": "Login required"}), 401
 
-    user = users_collection.find_one({"_id": ObjectId(session["user_id"])})
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+    try:
+        user = users_collection.find_one({"_id": ObjectId(session["user_id"])})
+        if not user:
+            return jsonify({"error": "User not found"}), 404
 
-    
-    raw_records = list(records_collection.find({"user_id": session["user_id"]}))
+        raw_records = list(records_collection.find({"user_id": session["user_id"]}))
+    except Exception as e:
+        current_app.logger.error(f"Database error during profile fetch: {e}")
+        return jsonify({"error": "Database service unavailable. Please try again later."}), 503
 
     history = []
     for r in raw_records:
-        
         status = None
         if isinstance(r.get("status"), str) and r.get("status").strip():
             status = r.get("status")
         elif isinstance(r.get("result"), str) and r.get("result").strip():
             status = r.get("result")
         else:
-            
             text = " ".join(str(v) for v in (r.get("input"), r.get("filename"), r.get("result")) if v)
             t = text.lower()
             if "secure" in t:
@@ -105,7 +119,6 @@ def profile_data():
             else:
                 created_at = None
 
-        
         input_val = r.get("input") or r.get("filename") or r.get("url") or "-"
 
         history.append({
@@ -125,13 +138,6 @@ def profile_data():
         "history": history
     }), 200
 
-from flask import current_app, request, jsonify, session
-from werkzeug.utils import secure_filename
-from bson import ObjectId
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @user_bp.route("/upload_profile", methods=["POST"])
 def upload_profile():
@@ -163,14 +169,14 @@ def upload_profile():
 
     image_url = f"/static/profile_images/{safe_filename}"
 
-
     try:
         users_collection.update_one(
             {"_id": ObjectId(session["user_id"])},
             {"$set": {"photo": image_url}}
         )
     except Exception as e:
-        return jsonify({"error": f"Saved file but DB update failed: {str(e)}"}), 500
+        current_app.logger.error(f"Database error during profile photo update: {e}")
+        return jsonify({"error": "Saved file but DB update failed: database unavailable"}), 500
 
     return jsonify({"message": "Profile image uploaded successfully", "image_url": image_url}), 200
 

@@ -8,6 +8,18 @@ function getCsrfToken() {
   return "";
 }
 
+async function parseJsonResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    try {
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const userName = document.getElementById("userName");
   const userEmail = document.getElementById("userEmail");
@@ -21,9 +33,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       credentials: "include",
     });
 
-    const data = await res.json();
+    const data = await parseJsonResponse(res);
 
-    if (!data.logged_in) {
+    if (!data || !data.logged_in) {
       alert("Please login first!");
       window.location.href = "/login";
       return;
@@ -33,7 +45,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       credentials: "include",
     });
 
-    const profileData = await profileRes.json();
+    const profileData = await parseJsonResponse(profileRes);
+    if (!profileRes.ok || !profileData || !profileData.user) {
+      const err = (profileData && profileData.error) || (profileRes.status >= 500 ? "Server error loading profile" : "Failed to load profile");
+      alert(err);
+      return;
+    }
+
     const user = profileData.user;
     const history = profileData.history;
 
@@ -70,15 +88,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         credentials: "include",
       });
-      const data = await res.json();
+      const data = await parseJsonResponse(res);
       if (res.ok) {
-        alert(data.message);
+        alert((data && data.message) || "Logged out successfully");
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("userEmail");
         window.location.href = "/login";
+      } else {
+        alert((data && data.error) || "Logout failed");
       }
     } catch (err) {
-      alert("Server error: " + err.message);
+      alert("Server error during logout.");
     }
   });
 });
@@ -118,17 +138,18 @@ uploadForm.addEventListener("submit", async (e) => {
       body: formData,
       credentials: "include",
     });
-    const data = await res.json();
+    const data = await parseJsonResponse(res);
 
-    if (res.ok) {
-      alert("Profile photo updated!");
+    if (res.ok && data) {
+      alert(data.message || "Profile photo updated!");
       document.getElementById("userPhoto").src = data.image_url;
 
       confirmUploadBtn.style.display = "none";
       fileInput.value = "";
       mainUploadBtn.textContent = "Update Image"; 
     } else {
-      alert(data.error || "Upload failed");
+      const errorMsg = data?.error || (res.status >= 500 ? "Server error during upload. Please try again later." : "Upload failed");
+      alert(errorMsg);
     }
   } catch (err) {
     console.error("Upload error:", err);

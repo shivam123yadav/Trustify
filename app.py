@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 import time
 from pymongo import ReturnDocument
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import HTTPException
 
 # Ensure environment variables are loaded prior to configuration
 load_dotenv()
@@ -170,6 +171,42 @@ def request_entity_too_large(error):
         "dashboard.html",
         message="Uploaded file is too large. The maximum allowed limit is 10 MB."
     ), 413
+
+@app.errorhandler(404)
+def not_found(error):
+    if request.path.startswith("/api/") or request.is_json:
+        return jsonify({"error": "Resource not found."}), 404
+    return render_template("dashboard.html", message="Page not found."), 404
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    if request.path.startswith("/api/") or request.is_json:
+        return jsonify({"error": "Method not allowed."}), 405
+    return render_template("dashboard.html", message="Method not allowed."), 405
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    app.logger.error(f"Internal server error (500) on {request.path}: {error}")
+    if request.path.startswith("/api/") or request.is_json:
+        return jsonify({"error": "Internal server error. Please try again later."}), 500
+    return render_template(
+        "dashboard.html",
+        message="An unexpected server error occurred. Please try again later."
+    ), 500
+
+@app.errorhandler(Exception)
+def handle_unexpected_exception(e):
+    if isinstance(e, HTTPException):
+        if request.path.startswith("/api/") or request.is_json:
+            return jsonify({"error": e.description}), e.code
+        return e
+    app.logger.error(f"Unhandled exception on {request.path}: {e}", exc_info=True)
+    if request.path.startswith("/api/") or request.is_json:
+        return jsonify({"error": "Internal server error. Please try again later."}), 500
+    return render_template(
+        "dashboard.html",
+        message="An unexpected server error occurred. Please try again later."
+    ), 500
 
 from routes.user_routes import user_bp
 app.register_blueprint(user_bp, url_prefix="/api/user")

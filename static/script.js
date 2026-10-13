@@ -72,6 +72,20 @@ window.showSpinner = showSpinner;
 // Reset spinner and submit button if restored via browser bfcache
 window.addEventListener("pageshow", resetSpinnersAndButtons);
 
+async function parseJsonResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    try {
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+window.parseJsonResponse = parseJsonResponse;
+
 document.addEventListener("DOMContentLoaded", async () => {
   // Ensure all spinners are hidden and buttons are enabled whenever page loads or re-renders
   resetSpinnersAndButtons();
@@ -84,9 +98,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: "GET",
         credentials: "include",
       });
-      const data = await response.json();
+      const data = await parseJsonResponse(response);
 
-      if (data.logged_in) {
+      if (data && data.logged_in) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userEmail", data.email);
         if (loginBtn) {
@@ -120,9 +134,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             },
             credentials: "include",
           });
-          const data = await response.json();
+          const data = await parseJsonResponse(response);
           if (response.ok) {
-            alert(data.message);
+            alert((data && data.message) || "Logged out successfully");
             localStorage.removeItem("isLoggedIn");
             localStorage.removeItem("userEmail");
             window.location.reload();

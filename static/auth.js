@@ -8,6 +8,18 @@ function getCsrfToken() {
   return "";
 }
 
+async function parseJsonResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    try {
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const loginBtn = document.querySelector(".login-btn");
   const dashboardLinks = document.querySelectorAll('a[href="/dashboard"]');
@@ -18,9 +30,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: "GET",
         credentials: "include",
       });
-      const data = await response.json();
+      const data = await parseJsonResponse(response);
 
-      if (data.logged_in) {
+      if (data && data.logged_in) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userEmail", data.email);
         if (loginBtn) {
@@ -54,9 +66,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             },
             credentials: "include",
           });
-          const data = await response.json();
+          const data = await parseJsonResponse(response);
           if (response.ok) {
-            alert(data.message);
+            alert((data && data.message) || "Logged out successfully");
             localStorage.removeItem("isLoggedIn");
             localStorage.removeItem("userEmail");
             window.location.reload();

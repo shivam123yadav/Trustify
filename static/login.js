@@ -8,6 +8,18 @@ function getCsrfToken() {
   return "";
 }
 
+async function parseJsonResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    try {
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById("toggleFormBtn");
   const formTitle = document.getElementById("formTitle");
@@ -22,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let showingRegister = false;
 
-  
   toggleBtn.addEventListener("click", () => {
     showingRegister = !showingRegister;
     if (showingRegister) {
@@ -42,16 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  
   async function checkSession() {
     try {
       const response = await fetch("/api/user/check_session", {
         method: "GET",
         credentials: "include",
       });
-      const data = await response.json();
+      const data = await parseJsonResponse(response);
 
-      if (data.logged_in) {
+      if (data && data.logged_in) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userEmail", data.email);
         if (loginBtn && logoutBtn) {
@@ -71,9 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  checkSession(); 
+  checkSession();
 
-  
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -96,21 +105,23 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
+      const data = await parseJsonResponse(response);
+      if (response.ok && data) {
+        alert(data.message || "Login successful!");
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userEmail", email);
         window.location.href = "/";
       } else {
-        alert(data.error || "Login failed.");
+        const errorMsg = data?.error || (response.status >= 500
+          ? "Server error. Please try again later."
+          : "Login failed. Please check your credentials.");
+        alert(errorMsg);
       }
     } catch (err) {
-      alert("Server error: " + err.message);
+      alert("Network error: Could not reach the server. Please check your connection.");
     }
   });
 
-  
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -135,19 +146,21 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ name, email, password, contact }),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-        toggleBtn.click(); 
+      const data = await parseJsonResponse(response);
+      if (response.ok && data) {
+        alert(data.message || "User registered successfully");
+        toggleBtn.click();
       } else {
-        alert(data.error || "Registration failed.");
+        const errorMsg = data?.error || (response.status >= 500
+          ? "Server error. Please try again later."
+          : "Registration failed. Please try again.");
+        alert(errorMsg);
       }
     } catch (err) {
-      alert("Server error: " + err.message);
+      alert("Network error: Could not reach the server. Please check your connection.");
     }
   });
 
-  
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       try {
@@ -158,15 +171,17 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           credentials: "include",
         });
-        const data = await response.json();
+        const data = await parseJsonResponse(response);
         if (response.ok) {
-          alert(data.message);
+          alert((data && data.message) || "Logged out successfully");
           localStorage.removeItem("isLoggedIn");
           localStorage.removeItem("userEmail");
           window.location.reload();
+        } else {
+          alert((data && data.error) || "Logout failed");
         }
       } catch (err) {
-        alert("Server error: " + err.message);
+        alert("Network error during logout.");
       }
     });
   }
