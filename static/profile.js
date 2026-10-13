@@ -1,3 +1,13 @@
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta && meta.content) return meta.content;
+  const cookieMatch = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+  if (cookieMatch) return decodeURIComponent(cookieMatch[1]);
+  const input = document.querySelector('input[name="csrf_token"]');
+  if (input && input.value) return input.value;
+  return "";
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const userName = document.getElementById("userName");
   const userEmail = document.getElementById("userEmail");
@@ -55,6 +65,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const res = await fetch("/api/user/logout", {
         method: "POST",
+        headers: {
+          "X-CSRFToken": getCsrfToken(),
+        },
         credentials: "include",
       });
       const data = await res.json();
@@ -94,10 +107,14 @@ uploadForm.addEventListener("submit", async (e) => {
 
   const formData = new FormData();
   formData.append("profileImage", fileInput.files[0]);
+  formData.append("csrf_token", getCsrfToken());
 
   try {
     const res = await fetch("/api/user/upload_profile", {
       method: "POST",
+      headers: {
+        "X-CSRFToken": getCsrfToken(),
+      },
       body: formData,
       credentials: "include",
     });

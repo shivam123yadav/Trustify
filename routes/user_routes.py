@@ -5,6 +5,7 @@ from database.db_connection import db
 from bson import ObjectId
 from datetime import datetime
 import os
+import secrets
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -58,8 +59,8 @@ def login():
     session.clear()
     session["user_id"] = str(user["_id"])
     session["user_email"] = user["email"]
+    session["_csrf_token"] = secrets.token_hex(32)
 
-    print("Session created:", dict(session))
     return jsonify({"message": "Login successful"}), 200
 
 
@@ -119,7 +120,7 @@ def profile_data():
         "user": {
             "name": user.get("name"),
             "email": user.get("email"),
-            "photo": user.get("photo", "/static/images/default-avatar.png")
+            "photo": user.get("photo") or "/static/user_images/default-avatar.png"
         },
         "history": history
     }), 200
@@ -147,14 +148,20 @@ def upload_profile():
     if not allowed_file(file.filename):
         return jsonify({"error": "Invalid file type"}), 400
 
-    filename = secure_filename(file.filename)
-    save_path = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+    ext = file.filename.rsplit('.', 1)[1].lower()
+    # Prevent collisions, overwrites across users, and path traversal
+    safe_filename = f"{session['user_id']}_{secrets.token_hex(8)}.{ext}"
+    upload_folder = current_app.config.get("UPLOAD_FOLDER", os.path.join("static", "profile_images"))
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder, exist_ok=True)
+
+    save_path = os.path.join(upload_folder, safe_filename)
     try:
         file.save(save_path)
     except Exception as e:
         return jsonify({"error": f"Failed to save file: {str(e)}"}), 500
 
-    image_url = f"/static/profile_images/{filename}"
+    image_url = f"/static/profile_images/{safe_filename}"
 
 
     try:
@@ -173,6 +180,7 @@ def upload_profile():
 @user_bp.route("/logout", methods=["POST"])
 def logout():
     session.clear()
+    session["_csrf_token"] = secrets.token_hex(32)
     return jsonify({"message": "Logged out successfully"}), 200
 
 @user_bp.route("/check_session", methods=["GET"])

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URl and malware Threat Detector</title>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
@@ -25,8 +26,9 @@
 
     <div class="container">
         <h2><i class="fas fa-exclamation-triangle"></i> Malicious Files</h2>
-        <form action="/scam/" method="post" enctype="multipart/form-data"
-            onsubmit="showSpinner('fileForm', 'fileSpinner')">
+        <form id="fileForm" action="/scam/" method="post" enctype="multipart/form-data"
+            onsubmit="return showSpinner('fileForm', 'fileSpinner')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label for="file"><strong>Upload a file (PDF/TXT only):</strong></label><br>
             <input type="file" name="file" required><br>
             <button type="submit"><i class="fas fa-upload scan-icon"></i> Analyze</button>
@@ -39,14 +41,19 @@
         {% endif %}
 
         <h2><i class="fas fa-link"></i> URL Threat Detection</h2>
-        <form method="post" action="/predict" onsubmit="showSpinner('urlForm', 'urlSpinner')">
+        <form id="urlForm" method="post" action="/predict" onsubmit="return showSpinner('urlForm', 'urlSpinner')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label for="url">Enter URL:</label>
-            <input type="text" name="url" required>
+            <input type="text" name="url" id="url" value="{{ input_url or '' }}" placeholder="https://example.com" required>
             <button type="submit"><i class="fas fa-search"></i> Classify</button>
             <div id="urlSpinner" class="spinner"></div>
         </form>
 
-        {% if predicted_class %}
+        {% if url_error %}
+        <div class="result-box error">
+            <p><strong><i class="fas fa-exclamation-circle"></i> Error:</strong> {{ url_error }}</p>
+        </div>
+        {% elif predicted_class %}
         <div class="result-box {{ predicted_class.lower() }}">
             <p><strong>URL:</strong> {{ input_url }}</p>
             <p><strong>Predicted Class:</strong> {{ predicted_class }}</p>

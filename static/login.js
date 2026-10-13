@@ -1,3 +1,13 @@
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta && meta.content) return meta.content;
+  const cookieMatch = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+  if (cookieMatch) return decodeURIComponent(cookieMatch[1]);
+  const input = document.querySelector('input[name="csrf_token"]');
+  if (input && input.value) return input.value;
+  return "";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById("toggleFormBtn");
   const formTitle = document.getElementById("formTitle");
@@ -78,7 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/api/user/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
@@ -114,7 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/api/user/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
         credentials: "include",
         body: JSON.stringify({ name, email, password, contact }),
       });
@@ -137,6 +153,9 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const response = await fetch("/api/user/logout", {
           method: "POST",
+          headers: {
+            "X-CSRFToken": getCsrfToken(),
+          },
           credentials: "include",
         });
         const data = await response.json();

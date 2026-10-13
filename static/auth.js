@@ -1,8 +1,17 @@
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta && meta.content) return meta.content;
+  const cookieMatch = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+  if (cookieMatch) return decodeURIComponent(cookieMatch[1]);
+  const input = document.querySelector('input[name="csrf_token"]');
+  if (input && input.value) return input.value;
+  return "";
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const loginBtn = document.querySelector(".login-btn");
   const dashboardLinks = document.querySelectorAll('a[href="/dashboard"]');
 
-  
   async function checkSession() {
     try {
       const response = await fetch("/api/user/check_session", {
@@ -33,7 +42,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await checkSession();
 
-  
   if (loginBtn) {
     loginBtn.addEventListener("click", async (e) => {
       if (localStorage.getItem("isLoggedIn") === "true") {
@@ -41,6 +49,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
           const response = await fetch("/api/user/logout", {
             method: "POST",
+            headers: {
+              "X-CSRFToken": getCsrfToken(),
+            },
             credentials: "include",
           });
           const data = await response.json();

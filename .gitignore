@@ -1,2 +1,17 @@
+# Environment variables
 .env
-.env
+.env.*
+!.env.example
+
+# Virtual environments
+env/
+venv/
+ENV/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
